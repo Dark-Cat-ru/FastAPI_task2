@@ -9,7 +9,7 @@ class ChangePostUseCase:
         self._database = database
         self._repo = PostRepozitory()
 
-    async def execute(self, new_post: PostSchema) -> PostSchema:
+    async def execute(self, new_post: str) -> PostSchema:
         try:
             with self._database.session() as session:
                 post = self._repo.change(session=session, post=new_post)

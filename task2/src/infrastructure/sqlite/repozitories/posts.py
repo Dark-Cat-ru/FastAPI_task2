@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from infrastructure.sqlite.models.posts import Post as PostModel
-from shemas.posts import Post as PostModel
+from shemas.posts import Post as PostShema
 from core.exceptions.database_exceptions import PostNotFoundException, PostAlreadyExistsException
 
 class PostRepozitory:
@@ -21,7 +21,7 @@ class PostRepozitory:
             raise PostNotFoundException
         return post
 
-    def create(self, session: Session, post: PostModel):
+    def create(self, session: Session, post: PostShema) -> PostModel:
         query = (
             insert(self._model)
             .values(post.model_dump())
@@ -40,7 +40,7 @@ class PostRepozitory:
         session.delete(post)
         session.commit()
 
-    def change(self, session: Session, new_post: str):
+    def change(self, session: Session, new_post: str) -> PostModel:
         old_post = session.query(PostModel).filter(PostModel.id==id)
         if not old_post:
             raise PostNotFoundException

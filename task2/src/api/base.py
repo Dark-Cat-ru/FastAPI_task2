@@ -91,7 +91,7 @@ async def create_post(
 
 @router.put("/change_post", status_code=status.HTTP_202_ACCEPTED, response_model=Post)
 async def change_post(
-    new_post: Post,
+    new_post: str,
     use_case: ChangePostUseCase = Depends(change_post_use_case)
 ) -> Post:
     try:
@@ -99,5 +99,18 @@ async def change_post(
     except PostIdIsNotUniqueException as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
+            detail=exc.get_detail()
+        )
+
+@router.delete("/delete_post", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(
+    id: int,
+    use_case: DeletePostUseCase = Depends(delete_post_use_case)
+):
+    try:
+        return await use_case.execute(id)
+    except PostNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=exc.get_detail()
         )
